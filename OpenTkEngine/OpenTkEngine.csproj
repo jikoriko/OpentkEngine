@@ -68,6 +68,8 @@
     <Compile Include="Core\Gui\VerticalScrollBar.cs" />
     <Compile Include="Core\Input.cs" />
     <Compile Include="Core\KeyListener.cs" />
+    <Compile Include="Core\Model.cs" />
+    <Compile Include="Core\ModelUtility.cs" />
     <Compile Include="Core\MouseListener.cs" />
     <Compile Include="Core\Shader.cs" />
     <Compile Include="Core\ShaderUtility.cs" />

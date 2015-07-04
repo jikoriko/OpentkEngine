@@ -24,8 +24,7 @@ namespace OpenTkEngine.Core
         private static float[] _cornerVerts = new float[91 * 3];
         private static int[] _cornerIndices = new int[91];
 
-        private static int _projectionWidth;
-        private static int _projectionHeight;
+        private static Rectangle _window;
 
         private static Vector2 _texturePosition = new Vector2(0.0f, 0.0f);
         private static Vector2 _textureDimension = new Vector2(1.0f, 1.0f);
@@ -43,44 +42,12 @@ namespace OpenTkEngine.Core
 
         private static Color4 _clearColor = Color4.Black;
 
-        public static void PushStencilDepth(StencilOp stencilOp)
+        public enum RenderMode
         {
-            if (_stencilDepth == -1)
-            {
-                GL.Enable(EnableCap.StencilTest);
-                GL.StencilMask(0xFF);
-                GL.Clear(ClearBufferMask.StencilBufferBit);
-            }
-            _stencilDepth++;
-
-            SetStencilOp(stencilOp);
-            _stencilStack.Push(stencilOp);
+            Ortho,
+            Perspective
         }
-
-        public static void SetStencilOp(StencilOp stencilOp)
-        {
-            GL.StencilOp(StencilOp.Keep, StencilOp.Keep, stencilOp);
-            StencilFunction function = stencilOp == StencilOp.Keep ? StencilFunction.Less : StencilFunction.Lequal;
-            GL.StencilFunc(function, _stencilDepth, 0xFF);
-        }
-
-        public static void PopStencilDepth()
-        {
-            if (_stencilDepth > -1)
-            {
-                _stencilDepth--;
-                _stencilStack.Pop();
-                if (_stencilDepth == -1)
-                {
-                    GL.Disable(EnableCap.StencilTest);
-                }
-                else
-                {
-                    StencilOp stencilOp = (StencilOp)_stencilStack.Peek();
-                    SetStencilOp(stencilOp);
-                }
-            }
-        }
+        private static RenderMode _renderMode = RenderMode.Ortho;
 
         private static BitmapFont _defaultFont = Assets.GetFont("default.txt");
         private static BitmapFont _currentFont = _defaultFont;
@@ -238,7 +205,7 @@ namespace OpenTkEngine.Core
 
         }
 
-        private static void SetColor(Color4 color)
+        public static void SetColor(Color4 color)
         {
             int uColorLocation = _currentShader.GetUniformLocation("uColour");
             GL.Uniform4(uColorLocation, color);
@@ -259,14 +226,28 @@ namespace OpenTkEngine.Core
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
         }
 
+        public static void SetRenderMode(RenderMode mode)
+        {
+            _renderMode = mode;
+            SetProjection(_window);
+        }
+
         public static void SetProjection(Rectangle client)
         {
             GL.Viewport(client);
             int uProjectionLocation = _currentShader.GetUniformLocation("uProjection");
-            _projectionWidth = client.Width;
-            _projectionHeight = client.Height;
+            _window = client;
 
-            Matrix4 projection = Matrix4.CreateOrthographicOffCenter(0, _projectionWidth, _projectionHeight, 0, 100, -100);
+            Matrix4 projection = Matrix4.Identity;
+
+            if (_renderMode == RenderMode.Ortho)
+            {
+                projection = Matrix4.CreateOrthographicOffCenter(0, client.Width, client.Height, 0, 100, -100);
+            }
+            else
+            {
+                projection = Matrix4.CreatePerspectiveFieldOfView((float)Math.PI / 4, client.Width / (float)client.Height, 1.0f, 100f); 
+            }
             GL.UniformMatrix4(uProjectionLocation, true, ref projection);
         }
 
@@ -331,7 +312,7 @@ namespace OpenTkEngine.Core
                 GL.Enable(EnableCap.ScissorTest);
                 _screenClip = true;
             }
-            GL.Scissor(clip.X, _projectionHeight - clip.Y - clip.Height, clip.Width, clip.Height);
+            GL.Scissor(clip.X, _window.Height - clip.Y - clip.Height, clip.Width, clip.Height);
         }
 
         public static void PushScreenClip(Rectangle clip)
@@ -386,6 +367,45 @@ namespace OpenTkEngine.Core
         {
             GL.Disable(EnableCap.ScissorTest);
             _screenClip = false;
+        }
+
+        public static void PushStencilDepth(StencilOp stencilOp)
+        {
+            if (_stencilDepth == -1)
+            {
+                GL.Enable(EnableCap.StencilTest);
+                GL.StencilMask(0xFF);
+                GL.Clear(ClearBufferMask.StencilBufferBit);
+            }
+            _stencilDepth++;
+
+            SetStencilOp(stencilOp);
+            _stencilStack.Push(stencilOp);
+        }
+
+        public static void SetStencilOp(StencilOp stencilOp)
+        {
+            GL.StencilOp(StencilOp.Keep, StencilOp.Keep, stencilOp);
+            StencilFunction function = stencilOp == StencilOp.Keep ? StencilFunction.Less : StencilFunction.Lequal;
+            GL.StencilFunc(function, _stencilDepth, 0xFF);
+        }
+
+        public static void PopStencilDepth()
+        {
+            if (_stencilDepth > -1)
+            {
+                _stencilDepth--;
+                _stencilStack.Pop();
+                if (_stencilDepth == -1)
+                {
+                    GL.Disable(EnableCap.StencilTest);
+                }
+                else
+                {
+                    StencilOp stencilOp = (StencilOp)_stencilStack.Peek();
+                    SetStencilOp(stencilOp);
+                }
+            }
         }
 
         public static BitmapFont GetFont()

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace Labs.Utility
+namespace OpenTkEngine.Core
 {
     /// <summary>
     /// Model Utility reads a very simple, inefficient file format that uses 

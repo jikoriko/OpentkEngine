@@ -10,6 +10,8 @@ namespace OpenTkEngine.Core
 {
     public class EngineWindow : GameWindow
     {
+        Model _model;
+
         public EngineWindow()
             : base(1000, 640, new GraphicsMode(32, 24, 8, 4), "OpenTK", GameWindowFlags.Default, DisplayDevice.Default, 3, 1, GraphicsContextFlags.ForwardCompatible)
         {
@@ -32,6 +34,8 @@ namespace OpenTkEngine.Core
             KeyUp += (sender, args) => StateHandler.OnKeyUp(sender, args);
             KeyPress += (sender, args) => StateHandler.OnKeyPress(sender, args);
 
+            _model = new Model("Assets/Models/model.bin");
+
             base.OnLoad(e);
         }
 
@@ -53,7 +57,11 @@ namespace OpenTkEngine.Core
             base.OnRenderFrame(e);
             Graphics.Clear();
 
-            StateHandler.RenderFrame(e);
+            Graphics.SetRenderMode(Graphics.RenderMode.Perspective);
+            _model.RenderVAO(Matrix4.CreateScale(10f) * Matrix4.CreateTranslation(0, 0, -40));
+            Graphics.SetRenderMode(Graphics.RenderMode.Ortho);
+
+            //StateHandler.RenderFrame(e);
 
             this.SwapBuffers();
         }
