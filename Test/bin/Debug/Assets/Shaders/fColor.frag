@@ -1,9 +1,12 @@
 ﻿#version 330
 
-uniform vec4 uEyePosition;
 uniform mat4 uModel;
+uniform vec4 uEyePosition;
 
 uniform sampler2D uTextureSampler;
+uniform float uTextureFlag;
+
+uniform vec4 uColour;
 
 struct LightProperties {
 	bool On;
@@ -31,20 +34,20 @@ struct MaterialProperties {
 
 uniform MaterialProperties uMaterial;
 
+uniform bool uLightingEnabled;
+
 in vec4 oNormal;
 in vec4 oSurfacePosition;
 in vec2 oTexCoords;
 
 out vec4 FragColour;
 
-void main()
+void ProcessLighting()
 {
 	vec4 texColour = texture(uTextureSampler, oTexCoords);
 	if (texColour.w <= 0.0) discard;
 
 	FragColour = vec4(0.0, 0.0, 0.0, texColour.w);
-	FragColour = vec4(0.0, 0.0, 0.0, 1.0);
-	return;
 	
 	for (int i = 0; i < 5; i++)
 	{
@@ -161,5 +164,21 @@ void main()
 
 			FragColour += vec4(max(colour, ambient * att), 1);
 		}
+	}
+}
+
+void main()
+{
+
+	if (uLightingEnabled)
+	{
+		ProcessLighting();
+	}
+	else
+	{
+		vec4 texColour = (texture(uTextureSampler, oTexCoords) * uColour) * uTextureFlag;
+		texColour += (1.0 - uTextureFlag) * uColour;
+		//if (texColour.w <= 0.0) discard;
+		FragColour = texColour;
 	}
 }

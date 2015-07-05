@@ -19,7 +19,7 @@ namespace Test
 
             Graphics.SetClearColor(Color4.Blue);
 
-            ScrollPanel panel = new ScrollPanel(0, 0, 0, 800, 640, state);
+            ScrollPanel panel = new ScrollPanel(0, 0, 0, 400, 640, state);
             panel.SetBackgroundColor(Color4.Red);
             ScrollPanel panel2 = new ScrollPanel(420, 10, 0, 350, 500, state);
 

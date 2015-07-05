@@ -11,6 +11,7 @@ namespace OpenTkEngine.Core
     public class Shader
     {
         private ShaderUtility _shaderUtility;
+        private static int current = 0; 
 
         public Shader(string vertShader, string fragShader)
         {

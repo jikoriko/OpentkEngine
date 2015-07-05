@@ -71,12 +71,12 @@ namespace OpenTkEngine.Core
             
 
             int vPositionLocation = Graphics.GetShader().GetAttribLocation("vPosition");
-            //int vNormalLocation = Graphics.GetShader().GetAttribLocation("vNormal");
+            int vNormalLocation = Graphics.GetShader().GetAttribLocation("vNormal");
             GL.EnableVertexAttribArray(vPositionLocation);
-            //GL.EnableVertexAttribArray(vNormalLocation);
+            GL.EnableVertexAttribArray(vNormalLocation);
 
             GL.VertexAttribPointer(vPositionLocation, 3, VertexAttribPointerType.Float, false, 6 * sizeof(float), 0);
-            //GL.VertexAttribPointer(vNormalLocation, 3, VertexAttribPointerType.Float, true, 6 * sizeof(float), 3 * sizeof(float));
+            GL.VertexAttribPointer(vNormalLocation, 3, VertexAttribPointerType.Float, true, 6 * sizeof(float), 3 * sizeof(float));
 
             _vbosBound = true;
         }
@@ -91,60 +91,14 @@ namespace OpenTkEngine.Core
             if (!_vbosBound) BindVBO();
         }
 
-        public void PreBind()
+        public int GetVaoID()
         {
-            BindVAO();
-            BindNone();
+            return _vaoID;
         }
 
-        public static void BindNone()
+        public int GetIndicesLength()
         {
-            GL.BindVertexArray(0);
-        }
-
-        /*
-        private void SetupLightMaterialProperties(Materials.Material material)
-        {
-            int uAmbientReflectivityLocation = Global.CurrentShader.GetUniformLocation("uMaterial.AmbientReflectivity");
-            GL.Uniform3(uAmbientReflectivityLocation, material.ambient);
-            int uDiffuseReflectivityLocation = Global.CurrentShader.GetUniformLocation("uMaterial.DiffuseReflectivity");
-            GL.Uniform3(uDiffuseReflectivityLocation, material.diffuse);
-            int uSpecularReflectivityLocation = Global.CurrentShader.GetUniformLocation("uMaterial.SpecularReflectivity");
-            GL.Uniform3(uSpecularReflectivityLocation, material.specular);
-            int uShininessLocation = Global.CurrentShader.GetUniformLocation("uMaterial.Shininess");
-            GL.Uniform1(uShininessLocation, material.shininess);
-        }
-        */
-
-        public void RenderVAO(Matrix4 matrix)
-        {
-            RenderVAO(matrix, 0);
-        }
-
-        public void RenderVAO(Matrix4 matrix, int offset)
-        {
-            RenderVAO(matrix, offset, _indices.Length - offset);
-        }
-
-        public void RenderVAO(Matrix4 matrix, int offset, int count)
-        {
-            Vector3 scale = matrix.ExtractScale();
-            Quaternion rotation = matrix.ExtractRotation();
-            Vector3 position = matrix.ExtractTranslation();
-
-            Graphics.SetColor(Color4.Red);
-
-            int uModel = Graphics.GetShader().GetUniformLocation("uModel");
-            GL.UniformMatrix4(uModel, true, ref matrix);
-
-            int uWorldLocation = Graphics.GetShader().GetUniformLocation("uWorld");
-            Matrix4 worldMatrix = Matrix4.Identity;
-            GL.UniformMatrix4(uWorldLocation, true, ref worldMatrix);
-
-            //SetupLightMaterialProperties(Global.CurrentMaterial);
-            BindVAO();
-            GL.DrawElements(PrimitiveType.Triangles, count, DrawElementsType.UnsignedInt, offset * sizeof(uint));
-            BindNone();
+            return _indices.Length;
         }
 
         public void DeleteBuffers()

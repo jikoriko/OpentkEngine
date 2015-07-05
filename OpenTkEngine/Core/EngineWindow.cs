@@ -12,6 +12,8 @@ namespace OpenTkEngine.Core
     {
         Model _model;
 
+        public Vector3 cameraPosition = Vector3.Zero;
+
         public EngineWindow()
             : base(1000, 640, new GraphicsMode(32, 24, 8, 4), "OpenTK", GameWindowFlags.Default, DisplayDevice.Default, 3, 1, GraphicsContextFlags.ForwardCompatible)
         {
@@ -57,11 +59,15 @@ namespace OpenTkEngine.Core
             base.OnRenderFrame(e);
             Graphics.Clear();
 
+            Graphics.PushWorldMatrix();
+            Graphics.TranslateWorld(cameraPosition);
             Graphics.SetRenderMode(Graphics.RenderMode.Perspective);
-            _model.RenderVAO(Matrix4.CreateScale(10f) * Matrix4.CreateTranslation(0, 0, -40));
+            Graphics.SetColor(Color4.Pink);
+            Graphics.RenderModel(_model, Matrix4.CreateScale(10f) * Matrix4.CreateTranslation(20, -20, -40));
             Graphics.SetRenderMode(Graphics.RenderMode.Ortho);
+            Graphics.PopWorldMatrix();
 
-            //StateHandler.RenderFrame(e);
+            StateHandler.RenderFrame(e);
 
             this.SwapBuffers();
         }

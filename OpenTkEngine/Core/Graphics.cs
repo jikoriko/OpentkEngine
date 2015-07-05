@@ -52,7 +52,7 @@ namespace OpenTkEngine.Core
         private static BitmapFont _defaultFont = Assets.GetFont("default.txt");
         private static BitmapFont _currentFont = _defaultFont;
 
-        private static Shader _defaultShader = Assets.GetShader("vPassThrough.vert", "fLighting.frag");
+        private static Shader _defaultShader = Assets.GetShader("vPassThrough.vert", "fColor.frag");
         private static Shader _currentShader = _defaultShader;
 
         public static void Initialize()
@@ -65,6 +65,7 @@ namespace OpenTkEngine.Core
             GL.CullFace(CullFaceMode.Back);
 
             _currentShader.Bind();
+            Lighting.InitLights();
         }
 
         public static void SetClearColor(Color4 color)
@@ -246,7 +247,7 @@ namespace OpenTkEngine.Core
             }
             else
             {
-                projection = Matrix4.CreatePerspectiveFieldOfView((float)Math.PI / 4, client.Width / (float)client.Height, 1.0f, 100f); 
+                projection = Matrix4.CreatePerspectiveFieldOfView((float)Math.PI / 4, client.Width / (float)client.Height, 1.0f, 1000f); 
             }
             GL.UniformMatrix4(uProjectionLocation, true, ref projection);
         }
@@ -624,6 +625,54 @@ namespace OpenTkEngine.Core
             }
 
             GL.DrawElements(PrimitiveType.Polygon, count, DrawElementsType.UnsignedInt, offset * sizeof(uint));
+        }
+
+        private static void SetupLightMaterialProperties(Materials.Material material)
+        {
+            int uAmbientReflectivityLocation = _currentShader.GetUniformLocation("uMaterial.AmbientReflectivity");
+            GL.Uniform3(uAmbientReflectivityLocation, material.ambient);
+            int uDiffuseReflectivityLocation = _currentShader.GetUniformLocation("uMaterial.DiffuseReflectivity");
+            GL.Uniform3(uDiffuseReflectivityLocation, material.diffuse);
+            int uSpecularReflectivityLocation = _currentShader.GetUniformLocation("uMaterial.SpecularReflectivity");
+            GL.Uniform3(uSpecularReflectivityLocation, material.specular);
+            int uShininessLocation = _currentShader.GetUniformLocation("uMaterial.Shininess");
+            GL.Uniform1(uShininessLocation, material.shininess);
+        }
+
+        public static void RenderModel(Model model, Matrix4 matrix)
+        {
+            RenderModel(model, matrix, 0);
+        }
+
+        public static void RenderModel(Model model, Matrix4 matrix, int offset)
+        {
+            RenderModel(model, matrix, offset, model.GetIndicesLength() - offset);
+        }
+
+        public static void RenderModel(Model model, Matrix4 matrix, int offset, int count)
+        {
+            Lighting.EnableLighting();
+            if (_currentVao != model.GetVaoID())
+            {
+                model.BindVAO();
+                _currentVao = model.GetVaoID();
+            }
+            int uModelLocation = _currentShader.GetUniformLocation("uModel");
+            GL.UniformMatrix4(uModelLocation, true, ref matrix);
+
+            if (_worldMatrixChanged)
+            {
+                int uWorldLocation = _currentShader.GetUniformLocation("uWorld");
+                Matrix4 worldMatrix = _worldMatrixStack.Count > 0 ? (Matrix4)_worldMatrixStack.Peek() : _worldMatrix;
+                GL.UniformMatrix4(uWorldLocation, true, ref worldMatrix);
+                Lighting.ApplyLightMatrix(worldMatrix);
+            }
+
+            SetupLightMaterialProperties(Materials.Brass);
+
+            GL.DrawElements(PrimitiveType.Triangles, count, DrawElementsType.UnsignedInt, offset * sizeof(uint));
+            Lighting.DisableLighting();
+
         }
 
         public static void Destroy()
