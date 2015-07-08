@@ -69,23 +69,6 @@ namespace OpenTkEngine.Core
 
             Model model = new Model(verts.ToArray(), indices.ToArray(), false);
 
-            /*
-            for (int i = 0; i < verts.Count; i++)
-            {
-
-                if (i % 6 == 1)
-                {
-                    Console.WriteLine(verts[i]);
-                }
-                else
-                {
-                    Console.Write(verts[i] + ", ");
-                    if (i % 3 == 1)
-                        Console.Write(" ");
-                }
-            }
-            */
-
             _positions.Clear();
             _normals.Clear();
             _textureUVs.Clear();
