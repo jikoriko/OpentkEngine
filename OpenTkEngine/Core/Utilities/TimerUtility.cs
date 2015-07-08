@@ -2,11 +2,11 @@
 
 namespace OpenTkEngine.Core
 {
-    public class Timer
+    public class TimerUtility
     {
         DateTime mLastTime;
 
-        public Timer()
+        public TimerUtility()
         {}
 
         public void Start()
