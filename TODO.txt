@@ -1,0 +1,42 @@
+=======================
+ GUI Components:
+-----------------------
+ * Add dragable Panels.
+ * Make ScrollPanels scroll content on mouse wheel.
+ * Tick Boxes.
+ * Radio Control - multiple radio buttons that the switch states of 
+	           others within the radio control field.
+ * Labels.
+
+=======================
+ Graphics
+-----------------------
+ * ShapeFactory for generating shapes on the fly.
+         - Shapes to consider:
+           - Squares - 2D
+           - Boxes
+           - Circles - 2D
+	   - Semi-Circles - 2D
+           - Spheres
+           - Triangles - 2D
+           - Pyramid
+           - Stars - 2D
+           - iconosphere
+ 
+ * Give models a primitive type to render with - lines etc to easilly 
+     view the models mesh.
+ * MORE MODEL FORMATS! 3ds, fbx ect.
+ * Animation:
+    - Model Animation
+    - Sprite Animation
+
+=======================
+ Audio
+-----------------------
+ * audio still needs to be fully implemented in the engine
+
+=======================
+ States
+-----------------------
+ * make states overlayable, if a state is an overlay then it should
+     render the state underneath, like an inventory overlay for example.

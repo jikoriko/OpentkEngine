@@ -20,6 +20,7 @@ namespace Test
 
             Graphics.SetClearColor(Color4.Blue);
 
+            //create a bunch of UI elements and link them to the state
             ScrollPanel panel = new ScrollPanel(0, 0, 0, 400, 640, state);
             panel.SetBackgroundColor(Color4.Red);
             ScrollPanel panel2 = new ScrollPanel(420, 10, 0, 350, 500, state);
@@ -48,10 +49,11 @@ namespace Test
 
             state.AddControl(panel);
 
-
+            //add a camera control for the state
             FpsCamera camera = new FpsCamera(new Vector3(0, 0, 0));
             state.SetCamera(camera);
 
+            //add some entities to the state
             ModelEntity ent = new ModelEntity(0, 0, -20, "Assets/Models/model.bin");
             state.AddEntity(ent);
             ent.SetScale(10f);
@@ -63,9 +65,8 @@ namespace Test
             SpriteEntity sprite = new SpriteEntity(20, 0, -10, "tileset.png");
             state.AddEntity(sprite);
 
+            //push the state to the state stack - top state is the state that runs
             StateHandler.Push(state);
-
-            //WavefrontLoader.LoadModel("Assets/Models/couch1.obj");
 
             window.Run(30.0f);
         }
