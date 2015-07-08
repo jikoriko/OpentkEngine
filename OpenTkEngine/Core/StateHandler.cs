@@ -56,22 +56,6 @@ namespace OpenTkEngine.Core
         public static void OnKeyDown(object sender, KeyboardKeyEventArgs args)
         {
             Last().OnKeyDown(sender, args);
-            if (args.Key == Key.W)
-            {
-                Global.window.cameraPosition.Z++;
-            }
-            else if (args.Key == Key.S)
-            {
-                Global.window.cameraPosition.Z--;
-            }
-            else if (args.Key == Key.A)
-            {
-                Global.window.cameraPosition.X++;
-            }
-            else if (args.Key == Key.D)
-            {
-                Global.window.cameraPosition.X--;
-            }
         }
 
         public static void OnKeyUp(object sender, KeyboardKeyEventArgs args)

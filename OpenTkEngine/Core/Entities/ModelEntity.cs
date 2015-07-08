@@ -16,7 +16,14 @@ namespace OpenTkEngine.Core
         public ModelEntity(float x, float y, float z, string modelName) 
             : base(x, y, z)
         {
-            _model = new Model(modelName);
+            if (modelName.EndsWith(".obj"))
+            {
+                _model = WavefrontLoader.LoadModel(modelName);
+            }
+            else
+            {
+                _model = new Model(modelName);
+            }
         }
 
         public void SetScale(float scale)

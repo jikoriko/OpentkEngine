@@ -10,8 +10,6 @@ namespace OpenTkEngine.Core
 {
     public class EngineWindow : GameWindow
     {
-        public Vector3 cameraPosition = Vector3.Zero;
-
         public EngineWindow()
             : base(1200, 800, new GraphicsMode(32, 24, 8, 4), "OpenTK", GameWindowFlags.Default, DisplayDevice.Default, 3, 1, GraphicsContextFlags.ForwardCompatible)
         {

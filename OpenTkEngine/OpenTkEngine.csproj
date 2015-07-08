@@ -84,6 +84,7 @@
     <Compile Include="Core\StateHandler.cs" />
     <Compile Include="Core\Graphics\Texture.cs" />
     <Compile Include="Core\Utilities\TimerUtility.cs" />
+    <Compile Include="Core\Utilities\WavefrontLoader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

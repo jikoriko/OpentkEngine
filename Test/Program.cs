@@ -56,10 +56,16 @@ namespace Test
             state.AddEntity(ent);
             ent.SetScale(10f);
 
+            ModelEntity ent2 = new ModelEntity(0, 0, 0, "Assets/Models/couch1.obj");
+            state.AddEntity(ent2);
+            ent.SetScale(0.2f);
+
             SpriteEntity sprite = new SpriteEntity(20, 0, -10, "tileset.png");
             state.AddEntity(sprite);
 
             StateHandler.Push(state);
+
+            //WavefrontLoader.LoadModel("Assets/Models/couch1.obj");
 
             window.Run(30.0f);
         }
