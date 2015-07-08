@@ -236,7 +236,6 @@ namespace OpenTkEngine.Core
         public static void SetProjection(Rectangle client)
         {
             GL.Viewport(client);
-            int uProjectionLocation = _currentShader.GetUniformLocation("uProjection");
             _window = client;
 
             Matrix4 projection = Matrix4.Identity;
@@ -249,6 +248,7 @@ namespace OpenTkEngine.Core
             {
                 projection = Matrix4.CreatePerspectiveFieldOfView((float)Math.PI / 4, client.Width / (float)client.Height, 1.0f, 1000f); 
             }
+            int uProjectionLocation = _currentShader.GetUniformLocation("uProjection");
             GL.UniformMatrix4(uProjectionLocation, true, ref projection);
         }
 
@@ -268,6 +268,20 @@ namespace OpenTkEngine.Core
                 _worldMatrixChanged = true;
                 _worldMatrixStack.Pop();
             }
+        }
+
+        public static void SetWorldMatrix(Matrix4 matrix)
+        {
+            if (_worldMatrixStack.Count != 0)
+            {
+                _worldMatrixStack.Pop();
+                _worldMatrixStack.Push(matrix);
+            }
+            else
+            {
+                _worldMatrix = matrix;
+            }
+            _worldMatrixChanged = true;
         }
 
         public static void SetWorldTranslation(Vector3 translation)
@@ -610,7 +624,7 @@ namespace OpenTkEngine.Core
         {
             if (_currentVao != _vao)
                 BindSquare();
-            else if (_texCoordsChanged)
+            if (_texCoordsChanged)
                 BindTextureCoords();
 
             int uModelLocation = _currentShader.GetUniformLocation("uModel");
@@ -627,7 +641,7 @@ namespace OpenTkEngine.Core
             GL.DrawElements(PrimitiveType.Polygon, count, DrawElementsType.UnsignedInt, offset * sizeof(uint));
         }
 
-        private static void SetupLightMaterialProperties(Materials.Material material)
+        public static void SetModelMaterial(Materials.Material material)
         {
             int uAmbientReflectivityLocation = _currentShader.GetUniformLocation("uMaterial.AmbientReflectivity");
             GL.Uniform3(uAmbientReflectivityLocation, material.ambient);
@@ -667,8 +681,6 @@ namespace OpenTkEngine.Core
                 GL.UniformMatrix4(uWorldLocation, true, ref worldMatrix);
                 Lighting.ApplyLightMatrix(worldMatrix);
             }
-
-            SetupLightMaterialProperties(Materials.Brass);
 
             GL.DrawElements(PrimitiveType.Triangles, count, DrawElementsType.UnsignedInt, offset * sizeof(uint));
             Lighting.DisableLighting();

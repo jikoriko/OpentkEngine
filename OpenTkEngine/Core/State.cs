@@ -16,13 +16,19 @@ namespace OpenTkEngine.Core
         protected List<KeyListener> _keyListeners;
         protected List<MouseListener> _mouseListeners;
 
+        protected List<Entity> _entities;
         protected List<Control> _controls;
 
-        public State()
+        protected Camera _camera = null;
+        protected Graphics.RenderMode _renderMode;
+
+        public State(Graphics.RenderMode renderMode)
         {
             _keyListeners = new List<KeyListener>();
             _mouseListeners = new List<MouseListener>();
+            _entities = new List<Entity>();
             _controls = new List<Control>();
+            _renderMode = renderMode;
         }
 
         public void AddKeyListener(KeyListener listener)
@@ -45,6 +51,24 @@ namespace OpenTkEngine.Core
         public void removeMouseListener(MouseListener listener)
         {
             _mouseListeners.Remove(listener);
+        }
+
+        public void SetCamera(Camera camera)
+        {
+            _camera = camera;
+        }
+
+        public void AddEntity(Entity entity)
+        {
+            if (!_entities.Contains(entity))
+            {
+                _entities.Add(entity);
+            }
+        }
+
+        public void RemoveEntity(Entity entity)
+        {
+            _entities.Remove(entity);
         }
 
         public void AddControl(Control control)
@@ -119,6 +143,16 @@ namespace OpenTkEngine.Core
         {
             if (!_active) return;
 
+            if (_camera != null)
+            {
+                _camera.Update();
+            }
+
+            foreach (Entity entity in _entities)
+            {
+                entity.Update();
+            }
+
             foreach (Control control in _controls)
             {
                 control.Update();
@@ -127,6 +161,27 @@ namespace OpenTkEngine.Core
 
         public virtual void RenderFrame(FrameEventArgs e)
         {
+            Graphics.SetRenderMode(_renderMode);
+
+            Graphics.PushWorldMatrix();
+
+            if (_camera != null)
+            {
+                _camera.LookThrough();
+            }
+
+            Graphics.PushWorldMatrix();
+            foreach (Entity entity in _entities)
+            {
+                entity.Render();
+            }
+            Graphics.PopWorldMatrix();
+
+            Graphics.PopWorldMatrix();
+
+            //back to ortho for ui overlay, absract to ui manager?
+            //TODO disable depth test on GL side so ui render is forced on top
+            Graphics.SetRenderMode(Graphics.RenderMode.Ortho);
             foreach (Control control in _controls)
             {
                 control.Render();

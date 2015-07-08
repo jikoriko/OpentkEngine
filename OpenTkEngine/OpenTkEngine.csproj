@@ -50,10 +50,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\Entities\Entity.cs" />
+    <Compile Include="Core\Entities\ModelEntity.cs" />
+    <Compile Include="Core\Entities\SpriteEntity.cs" />
     <Compile Include="Core\Graphics\BitmapFont.cs" />
     <Compile Include="Core\EngineWindow.cs" />
     <Compile Include="Core\Graphics\Assets.cs" />
     <Compile Include="Core\Global.cs" />
+    <Compile Include="Core\Graphics\Camera.cs" />
+    <Compile Include="Core\Graphics\FpsCamera.cs" />
     <Compile Include="Core\Graphics\Graphics.cs" />
     <Compile Include="Core\Gui\Button.cs" />
     <Compile Include="Core\Gui\Control.cs" />

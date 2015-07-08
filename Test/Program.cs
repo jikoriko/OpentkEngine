@@ -1,4 +1,5 @@
-﻿using OpenTK.Graphics;
+﻿using OpenTK;
+using OpenTK.Graphics;
 using OpenTkEngine.Core;
 using OpenTkEngine.Core.Gui;
 using System;
@@ -15,7 +16,7 @@ namespace Test
         {
             EngineWindow window = new EngineWindow();
 
-            State state = new State();
+            State state = new State(Graphics.RenderMode.Perspective);
 
             Graphics.SetClearColor(Color4.Blue);
 
@@ -46,6 +47,17 @@ namespace Test
             panel2.AddControl(listBox);
 
             state.AddControl(panel);
+
+
+            FpsCamera camera = new FpsCamera(new Vector3(0, 0, 0));
+            state.SetCamera(camera);
+
+            ModelEntity ent = new ModelEntity(0, 0, -20, "Assets/Models/model.bin");
+            state.AddEntity(ent);
+            ent.SetScale(10f);
+
+            SpriteEntity sprite = new SpriteEntity(20, 0, -10, "tileset.png");
+            state.AddEntity(sprite);
 
             StateHandler.Push(state);
 
