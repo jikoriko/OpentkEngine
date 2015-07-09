@@ -99,6 +99,17 @@ namespace OpenTkEngine.Core
             return model;
         }
 
+        private static ModelUtility LoadFromWavefront(string filename)
+        {
+            ModelUtility model = new ModelUtility();
+            float[] vertices;
+            int[] indices;
+            WavefrontLoader.LoadModel(filename, out vertices, out indices);
+            model.Vertices = vertices;
+            model.Indices = indices;
+            return model;
+        }
+
         public static ModelUtility LoadModel(string pModelFile)
         {
             string extension = pModelFile.Substring(pModelFile.IndexOf('.'));
@@ -110,6 +121,10 @@ namespace OpenTkEngine.Core
             else if (extension == ".bin")
             {
                 return LoadFromBIN(pModelFile);
+            }
+            else if (extension == ".obj")
+            {
+                return LoadFromWavefront(pModelFile);
             }
             else
             {

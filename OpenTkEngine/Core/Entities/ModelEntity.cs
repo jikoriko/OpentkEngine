@@ -13,17 +13,10 @@ namespace OpenTkEngine.Core
         protected Materials.Material _material = Materials.Crimson;
         protected float _scale = 1.0f;
 
-        public ModelEntity(float x, float y, float z, string modelName) 
+        public ModelEntity(float x, float y, float z, string modelName)
             : base(x, y, z)
         {
-            if (modelName.EndsWith(".obj"))
-            {
-                _model = WavefrontLoader.LoadModel(modelName);
-            }
-            else
-            {
-                _model = new Model(modelName);
-            }
+            _model = Assets.GetModel(modelName);
         }
 
         public void SetScale(float scale)

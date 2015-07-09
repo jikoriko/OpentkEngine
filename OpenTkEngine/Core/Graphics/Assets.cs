@@ -12,10 +12,12 @@ namespace OpenTkEngine.Core
         static readonly string TEXTURES = "Textures/";
         static readonly string SHADERS = "Shaders/";
         static readonly string FONTS = "Fonts/";
+        static readonly string MODELS = "Models/";
 
         static Dictionary<string, Texture> _textures = new Dictionary<string, Texture>();
         static Dictionary<string, Shader> _shaders = new Dictionary<string, Shader>();
         static Dictionary<string, BitmapFont> _fonts = new Dictionary<string, BitmapFont>();
+        static Dictionary<string, Model> _models = new Dictionary<string, Model>();
 
         public static bool LoadTexture(string filename)
         {
@@ -116,6 +118,38 @@ namespace OpenTkEngine.Core
             return _fonts[name];
         }
 
+        public static bool LoadModel(string filename)
+        {
+            if (!_models.ContainsKey(filename))
+            {
+                try
+                {
+                    Model model = new Model(ASSETS + MODELS + filename);
+                    _models.Add(filename, model);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                    return false;
+                }
+            }
+            else
+                Console.WriteLine("a model already exists with the filename: " + filename);
+            return true;
+        }
+
+        public static Model GetModel(string name)
+        {
+            if (!_models.ContainsKey(name))
+            {
+                if (!LoadModel(name))
+                {
+                    return null;
+                }
+            }
+            return _models[name];
+        }
+
         public static void Delete()
         {
             for (int i = 0; i < _textures.Count; i++)
@@ -128,6 +162,13 @@ namespace OpenTkEngine.Core
             {
                 _shaders.ElementAt(i).Value.Delete();
             }
+            _shaders.Clear();
+
+            for (int i = 0; i < _models.Count; i++)
+            {
+                _models.ElementAt(i).Value.DeleteBuffers();
+            }
+            _models.Clear();
         }
     }
 }

@@ -22,7 +22,7 @@ namespace OpenTkEngine.Core
         private static List<Vector2> _textureUVs = new List<Vector2>();
         private static List<Face> _faces = new List<Face>();
 
-        public static Model LoadModel(string filename)
+        public static void LoadModel(string filename, out float[] outVerts, out int[] outIndices)
         {
             string[] lines = System.IO.File.ReadAllLines(filename);
             foreach (string line in lines)
@@ -67,13 +67,13 @@ namespace OpenTkEngine.Core
                 indices.Add(i);
             }
 
-            Model model = new Model(verts.ToArray(), indices.ToArray(), false);
+            outVerts = verts.ToArray();
+            outIndices = indices.ToArray();
 
             _positions.Clear();
             _normals.Clear();
             _textureUVs.Clear();
             _faces.Clear();
-            return model;
         }
 
         private static Vector2 ParseVector2(string line)

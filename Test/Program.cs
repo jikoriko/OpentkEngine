@@ -54,13 +54,17 @@ namespace Test
             state.SetCamera(camera);
 
             //add some entities to the state
-            ModelEntity ent = new ModelEntity(0, 0, -20, "Assets/Models/model.bin");
+            ModelEntity ent = new ModelEntity(0, 0, -20, "model.bin");
             state.AddEntity(ent);
             ent.SetScale(10f);
 
-            ModelEntity ent2 = new ModelEntity(0, 0, 0, "Assets/Models/couch1.obj");
+            ModelEntity ent2 = new ModelEntity(0, 0, 0, "couch1.obj");
             state.AddEntity(ent2);
-            ent.SetScale(0.2f);
+            ent2.SetScale(0.2f);
+
+            ModelEntity ent3 = new ModelEntity(-200, 0, 0, "model.bin");
+            state.AddEntity(ent3);
+            ent3.SetScale(100f);
 
             SpriteEntity sprite = new SpriteEntity(20, 0, -10, "tileset.png");
             state.AddEntity(sprite);
