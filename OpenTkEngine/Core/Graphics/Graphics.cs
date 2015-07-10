@@ -665,6 +665,7 @@ namespace OpenTkEngine.Core
 
         public static void RenderModel(Model model, Matrix4 matrix, int offset, int count)
         {
+            Texture.BindNone();
             Lighting.EnableLighting();
             if (_currentVao != model.GetVaoID())
             {

@@ -19,11 +19,12 @@ namespace Test
             Graphics.SetClearColor(Color4.Blue);
 
             State state = new GameState(Graphics.RenderMode.Perspective, false);
+
             //push the state to the state stack - top state is the state that runs
             StateHandler.Push(state);
 
             Sound sound = Assets.GetSound("Main loop.wav");
-            sound.Play();
+            //sound.Play();
 
             window.Run(30.0f);
         }
