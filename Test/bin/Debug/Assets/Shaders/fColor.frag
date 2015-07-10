@@ -76,7 +76,7 @@ void ProcessLighting()
 				colour *= uLight[i].Intensity;
 			}
 
-			FragColour += vec4(max(texColour.xyz + colour, texColour.xyz + ambient), texColour.w);
+			FragColour += vec4(max(texColour.xyz + colour, min(texColour.xyz, ambient)), texColour.w);
 		}
 		else if (uLight[i].Type == 1)
 		{
