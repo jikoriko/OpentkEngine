@@ -126,7 +126,7 @@ namespace OpenTkEngine.Core
             {
                 try
                 {
-                    Model model = new Model(ASSETS + MODELS + filename);
+                    Model model = ModelUtility.LoadModel(ASSETS + MODELS + filename);
                     _models.Add(filename, model);
                 }
                 catch (Exception e)

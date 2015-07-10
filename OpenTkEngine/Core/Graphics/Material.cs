@@ -1,4 +1,5 @@
 ﻿using OpenTK;
+using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,22 +8,46 @@ using System.Threading.Tasks;
 
 namespace OpenTkEngine.Core
 {
-    public class Materials
+    public class Material
     {
-        public struct Material
+        public Vector3 Ambient;
+        public Vector3 Diffuse;
+        public Vector3 Specular;
+        public float Shininess;
+
+        public Texture DiffuseTexture = null;
+
+        public Material()
         {
-            public Material(float a1, float a2, float a3, float d1, float d2, float d3, float s1, float s2, float s3, float sh)
-            {
-                ambient = new Vector3(a1, a2, a3);
-                diffuse = new Vector3(d1, d2, d3);
-                specular = new Vector3(s1, s2, s3);
-                shininess = sh * 128.0f;
-            }
-            public Vector3 ambient;
-            public Vector3 diffuse;
-            public Vector3 specular;
-            public float shininess;
+            Ambient = new Vector3();
+            Diffuse = new Vector3();
+            Specular = new Vector3();
+            Shininess = 128.0f;
         }
+
+        public Material(float a1, float a2, float a3, float d1, float d2, float d3, float s1, float s2, float s3, float sh)
+        {
+            Ambient = new Vector3(a1, a2, a3);
+            Diffuse = new Vector3(d1, d2, d3);
+            Specular = new Vector3(s1, s2, s3);
+            Shininess = sh * 128.0f;
+        }
+
+        public void Bind()
+        {
+            int uAmbientReflectivityLocation = Graphics.GetShader().GetUniformLocation("uMaterial.AmbientReflectivity");
+            GL.Uniform3(uAmbientReflectivityLocation, Ambient);
+            int uDiffuseReflectivityLocation = Graphics.GetShader().GetUniformLocation("uMaterial.DiffuseReflectivity");
+            GL.Uniform3(uDiffuseReflectivityLocation, Diffuse);
+            int uSpecularReflectivityLocation = Graphics.GetShader().GetUniformLocation("uMaterial.SpecularReflectivity");
+            GL.Uniform3(uSpecularReflectivityLocation, Specular);
+            int uShininessLocation = Graphics.GetShader().GetUniformLocation("uMaterial.Shininess");
+            GL.Uniform1(uShininessLocation, Shininess);
+
+            if (DiffuseTexture != null)
+                DiffuseTexture.Bind();
+        }
+
         //gems
         public static Material Emerald = new Material(0.0215f, 0.1745f, 0.0215f, 0.07568f, 0.61424f, 0.07568f, 0.633f, 0.727811f, 0.633f, 0.6f);
         public static Material Jade = new Material(0.135f, 0.2225f, 0.1575f, 0.54f, 0.89f, 0.63f, 0.316228f, 0.316228f, 0.316228f, 0.1f);
@@ -54,7 +79,5 @@ namespace OpenTkEngine.Core
 
         public static Material Crimson = new Material(0.05f, 0f, 0f, 1f, 0f, 0.247f, 1f, 0f, 0.25f, 0.25f);
         public static Material DodgerBlue = new Material(0f, 0f, 0.05f, 0.117f, 0.565f, 1f, 0.1f, 0.12f, 1f, 0.25f);
-        
-
     }
 }

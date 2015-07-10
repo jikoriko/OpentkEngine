@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace OpenTkEngine.Core
@@ -9,41 +10,43 @@ namespace OpenTkEngine.Core
     /// </summary>
     public class ModelUtility
     {
-        public float[] Vertices { get; private set; }
-        public int[] Indices { get; private set; }
+        public static float[] Vertices { get; private set; }
+        public static int[] Indices { get; private set; }
 
         private ModelUtility() { }
 
-        private static ModelUtility LoadFromBIN(string pModelFile)
+        private static Model LoadFromBIN(string pModelFile)
         {
-            ModelUtility model = new ModelUtility();
             BinaryReader reader = new BinaryReader(new FileStream(pModelFile, FileMode.Open));
 
             int numberOfVertices = reader.ReadInt32();
             int floatsPerVertex = 6;
 
-            model.Vertices = new float[numberOfVertices * floatsPerVertex];
+            Vertices = new float[numberOfVertices * floatsPerVertex];
 
-            byte[]  byteArray = new byte[model.Vertices.Length * sizeof(float)];
+            byte[]  byteArray = new byte[Vertices.Length * sizeof(float)];
             byteArray = reader.ReadBytes(byteArray.Length);
 
-            Buffer.BlockCopy(byteArray, 0, model.Vertices, 0, byteArray.Length);
+            Buffer.BlockCopy(byteArray, 0, Vertices, 0, byteArray.Length);
 
             int numberOfTriangles = reader.ReadInt32();
 
-            model.Indices = new int[numberOfTriangles * 3];
+            Indices = new int[numberOfTriangles * 3];
             
-            byteArray = new byte[model.Indices.Length * sizeof(int)];
-            byteArray = reader.ReadBytes(model.Indices.Length * sizeof(int));
-            Buffer.BlockCopy(byteArray, 0, model.Indices, 0, byteArray.Length);
+            byteArray = new byte[Indices.Length * sizeof(int)];
+            byteArray = reader.ReadBytes(Indices.Length * sizeof(int));
+            Buffer.BlockCopy(byteArray, 0, Indices, 0, byteArray.Length);
 
             reader.Close();
-            return model;
+
+            ModelMesh mesh = new ModelMesh(Vertices, Indices, false);
+            List<ModelMesh> meshes = new List<ModelMesh>();
+            meshes.Add(mesh);
+            return new Model(meshes);
         }     
  
-        private static ModelUtility LoadFromSJG(string pModelFile)
+        private static Model LoadFromSJG(string pModelFile)
         {
-            ModelUtility model = new ModelUtility();
             StreamReader reader;
             reader = new StreamReader(pModelFile);
             string line = reader.ReadLine(); // vertex format
@@ -54,16 +57,16 @@ namespace OpenTkEngine.Core
                 throw new Exception("Error when reading number of vertices in model file " + pModelFile);
             }
 
-            model.Vertices = new float[numberOfVertices * floatsPerVertex];
+            Vertices = new float[numberOfVertices * floatsPerVertex];
 
             string[] values;
-            for (int i = 0; i < model.Vertices.Length; )
+            for (int i = 0; i < Vertices.Length; )
             {
                 line = reader.ReadLine();
                 values = line.Split(',');
                 foreach(string s in values)
                 {
-                    if (!float.TryParse(s, out model.Vertices[i]))
+                    if (!float.TryParse(s, out Vertices[i]))
                     {
                         throw new Exception("Error when reading vertices in model file " + pModelFile + " " + s + " is not a valid number");
                     }
@@ -79,7 +82,7 @@ namespace OpenTkEngine.Core
                 throw new Exception("Error when reading number of triangles in model file " + pModelFile);
             }
 
-            model.Indices = new int[numberOfTriangles * 3];
+            Indices = new int[numberOfTriangles * 3];
 
             for(int i = 0; i < numberOfTriangles * 3;)
             {
@@ -87,7 +90,7 @@ namespace OpenTkEngine.Core
                 values = line.Split(',');
                 foreach(string s in values)
                 {
-                    if (!int.TryParse(s, out model.Indices[i]))
+                    if (!int.TryParse(s, out Indices[i]))
                     {
                         throw new Exception("Error when reading indices in model file " + pModelFile + " " + s + " is not a valid index");
                     }
@@ -96,21 +99,22 @@ namespace OpenTkEngine.Core
             }
 
             reader.Close();
-            return model;
+
+            ModelMesh mesh = new ModelMesh(Vertices, Indices, false);
+            List<ModelMesh> meshes = new List<ModelMesh>();
+            meshes.Add(mesh);
+            return new Model(meshes);
         }
 
-        private static ModelUtility LoadFromWavefront(string filename)
+        private static Model LoadFromWavefront(string filename)
         {
-            ModelUtility model = new ModelUtility();
-            float[] vertices;
-            int[] indices;
-            WavefrontLoader.LoadModel(filename, out vertices, out indices);
-            model.Vertices = vertices;
-            model.Indices = indices;
+            List<ModelMesh> meshes;
+            WavefrontLoader.LoadModel(filename, out meshes);
+            Model model = new Model(meshes);
             return model;
         }
 
-        public static ModelUtility LoadModel(string pModelFile)
+        public static Model LoadModel(string pModelFile)
         {
             string extension = pModelFile.Substring(pModelFile.IndexOf('.'));
 

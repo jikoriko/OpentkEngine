@@ -641,36 +641,24 @@ namespace OpenTkEngine.Core
             GL.DrawElements(PrimitiveType.Polygon, count, DrawElementsType.UnsignedInt, offset * sizeof(uint));
         }
 
-        public static void SetModelMaterial(Materials.Material material)
+        public static void RenderModelMesh(ModelMesh mesh, Matrix4 matrix)
         {
-            int uAmbientReflectivityLocation = _currentShader.GetUniformLocation("uMaterial.AmbientReflectivity");
-            GL.Uniform3(uAmbientReflectivityLocation, material.ambient);
-            int uDiffuseReflectivityLocation = _currentShader.GetUniformLocation("uMaterial.DiffuseReflectivity");
-            GL.Uniform3(uDiffuseReflectivityLocation, material.diffuse);
-            int uSpecularReflectivityLocation = _currentShader.GetUniformLocation("uMaterial.SpecularReflectivity");
-            GL.Uniform3(uSpecularReflectivityLocation, material.specular);
-            int uShininessLocation = _currentShader.GetUniformLocation("uMaterial.Shininess");
-            GL.Uniform1(uShininessLocation, material.shininess);
+            RenderModelMesh(mesh, matrix, 0);
         }
 
-        public static void RenderModel(Model model, Matrix4 matrix)
+        public static void RenderModelMesh(ModelMesh mesh, Matrix4 matrix, int offset)
         {
-            RenderModel(model, matrix, 0);
+            RenderModelMesh(mesh, matrix, offset, mesh.GetIndicesLength() - offset);
         }
 
-        public static void RenderModel(Model model, Matrix4 matrix, int offset)
-        {
-            RenderModel(model, matrix, offset, model.GetIndicesLength() - offset);
-        }
-
-        public static void RenderModel(Model model, Matrix4 matrix, int offset, int count)
+        public static void RenderModelMesh(ModelMesh mesh, Matrix4 matrix, int offset, int count)
         {
             Texture.BindNone();
             Lighting.EnableLighting();
-            if (_currentVao != model.GetVaoID())
+            if (_currentVao != mesh.GetVaoID())
             {
-                model.BindVAO();
-                _currentVao = model.GetVaoID();
+                mesh.BindVAO();
+                _currentVao = mesh.GetVaoID();
             }
             int uModelLocation = _currentShader.GetUniformLocation("uModel");
             GL.UniformMatrix4(uModelLocation, true, ref matrix);

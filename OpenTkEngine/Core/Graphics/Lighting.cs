@@ -67,7 +67,7 @@ namespace OpenTkEngine.Core
 
         private static Vector3[] lightColours = new Vector3[] {
             new Vector3(1, 1, 1),
-            new Vector3(1, 0, 0),
+            new Vector3(1, 1, 1),
             new Vector3(0, 1, 0),
             new Vector3(1, 1, 0),
             new Vector3(1, 0, 1)
@@ -83,7 +83,7 @@ namespace OpenTkEngine.Core
 
         private static float[] lightIntensities = new float[] {
             0.7f,
-            2000.0f,
+            1000.0f,
             2000.0f,
             50000.0f,
             50000.0f

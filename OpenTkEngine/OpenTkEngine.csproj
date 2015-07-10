@@ -63,6 +63,7 @@
     <Compile Include="Core\Graphics\Camera.cs" />
     <Compile Include="Core\Graphics\FpsCamera.cs" />
     <Compile Include="Core\Graphics\Graphics.cs" />
+    <Compile Include="Core\Graphics\ModelMesh.cs" />
     <Compile Include="Core\Gui\Button.cs" />
     <Compile Include="Core\Gui\Control.cs" />
     <Compile Include="Core\Gui\DropDownBox.cs" />
@@ -77,7 +78,7 @@
     <Compile Include="Core\Input.cs" />
     <Compile Include="Core\Listeners\KeyListener.cs" />
     <Compile Include="Core\Graphics\Lighting.cs" />
-    <Compile Include="Core\Graphics\Materials.cs" />
+    <Compile Include="Core\Graphics\Material.cs" />
     <Compile Include="Core\Graphics\Model.cs" />
     <Compile Include="Core\Utilities\ModelUtility.cs" />
     <Compile Include="Core\Listeners\MouseListener.cs" />
