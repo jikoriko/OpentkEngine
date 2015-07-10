@@ -33,10 +33,5 @@
 =======================
  Audio
 -----------------------
- * audio still needs to be fully implemented in the engine
+ * audio managment system for each state
 
-=======================
- States
------------------------
- * make states overlayable, if a state is an overlay then it should
-     render the state underneath, like an inventory overlay for example.
