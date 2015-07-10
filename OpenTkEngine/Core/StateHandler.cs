@@ -79,7 +79,22 @@ namespace OpenTkEngine.Core
         {
             if (_stateList.Count == 0)
                 return;
-            _stateList.Last().RenderFrame(e);
+            List<State> renderStates = new List<State>();
+            renderStates.Add(_stateList.Last());
+
+            int stateIndex = _stateList.Count - 2;
+            while(renderStates[renderStates.Count - 1].IsOverlay())
+            {
+                if (stateIndex < 0)
+                    break;
+                renderStates.Add(_stateList.ElementAt(stateIndex));
+                stateIndex--;
+            }
+
+            for (int i = renderStates.Count - 1; i >= 0; i--)
+            {
+                renderStates[i].RenderFrame(e);
+            }
         }
 
     }

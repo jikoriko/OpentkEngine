@@ -12,6 +12,7 @@ namespace OpenTkEngine.Core
     public class State : KeyListener, MouseListener
     {
         protected bool _active = true;
+        protected bool _overlay;
 
         protected List<KeyListener> _keyListeners;
         protected List<MouseListener> _mouseListeners;
@@ -22,13 +23,19 @@ namespace OpenTkEngine.Core
         protected Camera _camera = null;
         protected Graphics.RenderMode _renderMode;
 
-        public State(Graphics.RenderMode renderMode)
+        public State(Graphics.RenderMode renderMode, bool overlay)
         {
             _keyListeners = new List<KeyListener>();
             _mouseListeners = new List<MouseListener>();
             _entities = new List<Entity>();
             _controls = new List<Control>();
             _renderMode = renderMode;
+            _overlay = overlay;
+            Initialize();
+        }
+
+        protected virtual void Initialize()
+        {
         }
 
         public void AddKeyListener(KeyListener listener)
@@ -80,6 +87,11 @@ namespace OpenTkEngine.Core
         public void RemoveControl(Control control)
         {
             _controls.Remove(control);
+        }
+
+        public bool IsOverlay()
+        {
+            return _overlay;
         }
 
         public virtual void OnAdded()
