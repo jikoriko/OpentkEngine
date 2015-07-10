@@ -5,11 +5,14 @@ using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using OpenTK.Audio;
 
 namespace OpenTkEngine.Core
 {
     public class EngineWindow : GameWindow
     {
+        AudioContext AC;
+
         public EngineWindow()
             : base(1200, 800, new GraphicsMode(32, 24, 8, 4), "OpenTK", GameWindowFlags.Default, DisplayDevice.Default, 3, 1, GraphicsContextFlags.ForwardCompatible)
         {
@@ -18,6 +21,8 @@ namespace OpenTkEngine.Core
             string shaderVersion = GL.GetString(StringName.ShadingLanguageVersion);
             Console.WriteLine("OpenGL: " + versionOpenGL);
             Console.WriteLine("GLSL: " + shaderVersion);
+
+            AC = new AudioContext();
         }
 
         protected override void OnLoad(EventArgs e)

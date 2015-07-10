@@ -72,6 +72,9 @@ namespace Test
             //push the state to the state stack - top state is the state that runs
             StateHandler.Push(state);
 
+            Sound sound = Assets.GetSound("Main loop.wav");
+            sound.Play();
+
             window.Run(30.0f);
         }
     }
