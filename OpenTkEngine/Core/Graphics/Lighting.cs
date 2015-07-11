@@ -82,7 +82,7 @@ namespace OpenTkEngine.Core
         };
 
         private static float[] lightIntensities = new float[] {
-            0.7f,
+            1.0f,
             1000.0f,
             2000.0f,
             50000.0f,

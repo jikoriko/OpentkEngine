@@ -1,4 +1,5 @@
 ﻿using OpenTK;
+using OpenTK.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,7 +32,7 @@ namespace OpenTkEngine.Core
             Matrix4 matrix = Matrix4.CreateScale(_scale) * Matrix4.CreateTranslation(_position);
 
             foreach(ModelMesh mesh in _model.GetMeshes())
-                Graphics.RenderModelMesh(mesh, matrix);
+                Graphics.RenderModelMesh(mesh, matrix, Color4.White);
         }
 
     }

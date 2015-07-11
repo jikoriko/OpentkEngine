@@ -189,7 +189,7 @@ namespace OpenTkEngine.Core
                 }
                 else if (line.StartsWith("Ns"))
                 {
-                    current.Shininess = float.Parse(line.Split(new char[] { ' ' })[1]) * 0.000001f;
+                    current.Shininess = (float.Parse(line.Split(new char[] { ' ' })[1]) / 1000f) * 128.0f;
                 }
                 else if (line.StartsWith("map_Kd"))
                 {

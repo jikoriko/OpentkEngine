@@ -641,18 +641,19 @@ namespace OpenTkEngine.Core
             GL.DrawElements(PrimitiveType.Polygon, count, DrawElementsType.UnsignedInt, offset * sizeof(uint));
         }
 
-        public static void RenderModelMesh(ModelMesh mesh, Matrix4 matrix)
+        public static void RenderModelMesh(ModelMesh mesh, Matrix4 matrix, Color4 color)
         {
-            RenderModelMesh(mesh, matrix, 0);
+            RenderModelMesh(mesh, matrix, 0, color);
         }
 
-        public static void RenderModelMesh(ModelMesh mesh, Matrix4 matrix, int offset)
+        public static void RenderModelMesh(ModelMesh mesh, Matrix4 matrix, int offset, Color4 color)
         {
-            RenderModelMesh(mesh, matrix, offset, mesh.GetIndicesLength() - offset);
+            RenderModelMesh(mesh, matrix, offset, mesh.GetIndicesLength() - offset, color);
         }
 
-        public static void RenderModelMesh(ModelMesh mesh, Matrix4 matrix, int offset, int count)
+        public static void RenderModelMesh(ModelMesh mesh, Matrix4 matrix, int offset, int count, Color4 color)
         {
+            SetColor(color);
             Texture.BindNone();
             Lighting.EnableLighting();
             if (_currentVao != mesh.GetVaoID())

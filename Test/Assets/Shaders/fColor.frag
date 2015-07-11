@@ -44,8 +44,9 @@ out vec4 FragColour;
 
 void ProcessLighting()
 {
-	vec4 texColour = texture(uTextureSampler, oTexCoords);
-	if (texColour.w <= 0.0) discard;
+	vec4 texColour = (texture(uTextureSampler, oTexCoords) * uColour) * uTextureFlag;
+	texColour += (1.0 - uTextureFlag) * uColour;
+	if (texColour.w == 0.0) discard;
 
 	FragColour = vec4(0.0, 0.0, 0.0, texColour.w);
 	
@@ -63,20 +64,27 @@ void ProcessLighting()
 			vec3 ambient = uLight[i].AmbientLight * uMaterial.AmbientReflectivity;
 			vec3 colour = vec3(0.0);
 
-			if (diffuseFactor > 0.01)
-			{
 				vec3 eyeDirection = normalize(uEyePosition.xyz - oSurfacePosition.xyz);
 				vec3 reflectedVector = reflect(lightDir, normal);
 				float specularFactor = pow(max(dot(reflectedVector, eyeDirection), 0.0), uMaterial.Shininess);
 
 				vec3 diffuse = uLight[i].DiffuseLight * uMaterial.DiffuseReflectivity * diffuseFactor;
-				vec3 specular = uLight[i].SpecularLight * uMaterial.SpecularReflectivity * specularFactor;
+				diffuse = (ambient + diffuse) 
+				* texColour.xyz;
+				vec3 specular;
+				if (diffuseFactor > 0.0)
+				{
+				    specular = uLight[i].SpecularLight * uMaterial.SpecularReflectivity * specularFactor;
+				}
+				else
+				{
+					specular = vec3(0.0);
+				}
 
 				colour = diffuse + specular;
 				colour *= uLight[i].Intensity;
-			}
 
-			FragColour += vec4(max(texColour.xyz + colour, min(texColour.xyz, ambient)), texColour.w);
+			FragColour += vec4(colour, texColour.w);
 		}
 		else if (uLight[i].Type == 1)
 		{
