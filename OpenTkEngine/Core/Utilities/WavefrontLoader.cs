@@ -15,6 +15,7 @@ namespace OpenTkEngine.Core
             public List<Vector3> Positions = new List<Vector3>();
             public List<Vector3> Normals = new List<Vector3>();
             public List<Vector2> TextureUVs = new List<Vector2>();
+            public string MaterialLibrary;
             public string MaterialName;
         }
 
@@ -24,13 +25,13 @@ namespace OpenTkEngine.Core
 
         private static List<List<Face>> _meshes = new List<List<Face>>();
 
-        private static Dictionary<string, Material> _materials = new Dictionary<string, Material>();
+        private static Dictionary<string, Dictionary<string, Material>> _materialLibrary = new Dictionary<string,Dictionary<string,Material>>();
+        private static string _currentMaterialLibrary;
         private static string _currentMaterial;
 
         public static void LoadModel(string filename, out List<ModelMesh> outMeshes)
         {
             ParseModel(filename);
-            ParseMaterials(filename.Split(new char[] { '.' })[0] + ".mtl");
 
             List<float> verts = new List<float>();
             List<int> indices = new List<int>();
@@ -65,7 +66,7 @@ namespace OpenTkEngine.Core
                 }
 
                 ModelMesh mesh = new ModelMesh(verts.ToArray(), indices.ToArray(), true);
-                mesh.SetMaterial(_materials[_meshes[i][0].MaterialName]);
+                mesh.SetMaterial(_materialLibrary[_meshes[i][0].MaterialLibrary][_meshes[i][0].MaterialName]);
                 meshes.Add(mesh);
             }
 
@@ -75,7 +76,7 @@ namespace OpenTkEngine.Core
             _normals.Clear();
             _textureUVs.Clear();
             _meshes.Clear();
-            _materials.Clear();
+            _materialLibrary.Clear();
         }
 
         private static void ParseModel(string filename)
@@ -83,6 +84,13 @@ namespace OpenTkEngine.Core
             string[] lines = System.IO.File.ReadAllLines(filename);
             foreach (string line in lines)
             {
+                if (line.StartsWith("mtllib "))
+                {
+                    _currentMaterialLibrary = line.Split(new char[] { ' ' })[1];
+                    _materialLibrary.Add(_currentMaterialLibrary, new Dictionary<string, Material>());
+                    ParseMaterials(filename.Substring(0, filename.LastIndexOf('/') + 1) + _currentMaterialLibrary);
+                    
+                }
                 if (line.StartsWith("v "))
                 {
                     _positions.Add(ParseVector3(line));
@@ -148,6 +156,7 @@ namespace OpenTkEngine.Core
                     }
                 }
             }
+            face.MaterialLibrary = _currentMaterialLibrary;
             face.MaterialName = _currentMaterial;
             _meshes[_meshes.Count - 1].Add(face);
 
@@ -164,7 +173,7 @@ namespace OpenTkEngine.Core
                 {
                     current = new Material();
                     materialName = line.Split(new char[] { ' ' })[1];
-                    _materials.Add(materialName, current);
+                    _materialLibrary[_currentMaterialLibrary].Add(materialName, current);
                 }
                 else if (line.StartsWith("Ka"))
                 {
