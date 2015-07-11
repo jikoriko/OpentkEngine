@@ -88,10 +88,9 @@ namespace OpenTkEngine.Core
                 {
                     _currentMaterialLibrary = line.Split(new char[] { ' ' })[1];
                     _materialLibrary.Add(_currentMaterialLibrary, new Dictionary<string, Material>());
-                    ParseMaterials(filename.Substring(0, filename.LastIndexOf('/') + 1) + _currentMaterialLibrary);
-                    
+                    ParseMaterialLibrary(filename.Substring(0, filename.LastIndexOf('/') + 1) + _currentMaterialLibrary);
                 }
-                if (line.StartsWith("v "))
+                else if (line.StartsWith("v "))
                 {
                     _positions.Add(ParseVector3(line));
                 }
@@ -159,10 +158,9 @@ namespace OpenTkEngine.Core
             face.MaterialLibrary = _currentMaterialLibrary;
             face.MaterialName = _currentMaterial;
             _meshes[_meshes.Count - 1].Add(face);
-
         }
 
-        private static void ParseMaterials(string filename)
+        private static void ParseMaterialLibrary(string filename)
         {
             string[] lines = System.IO.File.ReadAllLines(filename);
             Material current = null;
