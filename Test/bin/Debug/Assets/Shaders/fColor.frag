@@ -64,25 +64,24 @@ void ProcessLighting()
 			vec3 ambient = uLight[i].AmbientLight * uMaterial.AmbientReflectivity;
 			vec3 colour = vec3(0.0);
 
+			vec3 diffuse = uLight[i].DiffuseLight * uMaterial.DiffuseReflectivity * diffuseFactor;
+			diffuse = (ambient + diffuse) * texColour.xyz;
+
+			vec3 specular;
+			if (diffuseFactor > 0.0)
+			{
 				vec3 eyeDirection = normalize(uEyePosition.xyz - oSurfacePosition.xyz);
 				vec3 reflectedVector = reflect(lightDir, normal);
 				float specularFactor = pow(max(dot(reflectedVector, eyeDirection), 0.0), uMaterial.Shininess);
+			    specular = uLight[i].SpecularLight * uMaterial.SpecularReflectivity * specularFactor;
+			}
+			else
+			{
+				specular = vec3(0.0);
+			}
 
-				vec3 diffuse = uLight[i].DiffuseLight * uMaterial.DiffuseReflectivity * diffuseFactor;
-				diffuse = (ambient + diffuse) 
-				* texColour.xyz;
-				vec3 specular;
-				if (diffuseFactor > 0.0)
-				{
-				    specular = uLight[i].SpecularLight * uMaterial.SpecularReflectivity * specularFactor;
-				}
-				else
-				{
-					specular = vec3(0.0);
-				}
-
-				colour = diffuse + specular;
-				colour *= uLight[i].Intensity;
+			colour = diffuse + specular;
+			colour *= uLight[i].Intensity;
 
 			FragColour += vec4(colour, texColour.w);
 		}
@@ -92,7 +91,6 @@ void ProcessLighting()
 			vec4 lightDir = normalize(uLight[i].Position - oSurfacePosition);
 			
 			float diffuseFactor = max(dot(oNormal, lightDir), 0);
-
 			vec3 ambient = uLight[i].AmbientLight * uMaterial.AmbientReflectivity;
 			vec3 colour = vec3(0.0);
 
@@ -101,23 +99,26 @@ void ProcessLighting()
 				(uLight[i].LinearAttenuation * dist) + 
 				(uLight[i].QuadraticAttenuation * dist * dist));
 
+			vec3 diffuse = uLight[i].DiffuseLight * uMaterial.DiffuseReflectivity * diffuseFactor;
+			diffuse = (ambient + diffuse) * texColour.xyz;
+
+			vec3 specular;
 			if (diffuseFactor > 0.0)
 			{
 				vec4 eyeDirection = normalize(uEyePosition - oSurfacePosition);
 				vec4 reflectedVector = reflect(-lightDir, oNormal);
 				float specularFactor = pow(max(dot(reflectedVector, eyeDirection), 0.0), uMaterial.Shininess);
-
-				vec3 diffuse = uLight[i].DiffuseLight * max(uMaterial.DiffuseReflectivity, texColour.xyz) * diffuseFactor;
-				vec3 specular = uLight[i].SpecularLight * uMaterial.AmbientReflectivity * specularFactor * texColour.xyz;
-
-				colour = diffuse * att + specular * att;
-				colour *= uLight[i].Intensity;
-
+				specular = uLight[i].SpecularLight * uMaterial.AmbientReflectivity * specularFactor * texColour.xyz;
+			}
+			else
+			{
+				specular = vec3(0.0);
 			}
 
-			FragColour += vec4(max(colour, ambient * att), texColour.w);
-			//FragColour = min(FragColour, vec4(texColour.xyz, texColour.w));
+			colour = diffuse * att + specular * att;
+			colour *= uLight[i].Intensity;
 
+			FragColour += vec4(colour, texColour.w);
 		}
 		else if (uLight[i].Type == 2)
 		{
@@ -146,31 +147,46 @@ void ProcessLighting()
 
 			if (spotFactor > radians(uLight[i].SpotCutOff))
 			{
+				
+				
+				vec3 diffuse = uLight[i].DiffuseLight * uMaterial.DiffuseReflectivity * diffuseFactor;
+				diffuse = (ambient + diffuse) * texColour.xyz;
+
+				vec3 specular;
 				if (diffuseFactor > 0.0)
 				{
-				
-					vec3 diffuse = uLight[i].DiffuseLight * max(uMaterial.DiffuseReflectivity, texColour.xyz) * diffuseFactor;
-					vec3 specular = uLight[i].SpecularLight * uMaterial.SpecularReflectivity * specularFactor * texColour.xyz;
-					
-					colour = diffuse * att + specular * att;
-					colour *= uLight[i].Intensity;
+					specular = uLight[i].SpecularLight * uMaterial.SpecularReflectivity * specularFactor * texColour.xyz;
 				}
+				else
+				{
+					specular = vec3(0.0);
+				}
+				
+				colour = diffuse * att + specular * att;
+				colour *= uLight[i].Intensity;
 			}
 			else if (spotFactor > outerCutOff)
 			{
 				float falloff = (spotFactor - outerCutOff) / (radians(uLight[i].SpotCutOff) - outerCutOff);
+					
+				vec3 diffuse = uLight[i].DiffuseLight * uMaterial.DiffuseReflectivity * diffuseFactor * falloff;
+				diffuse = (ambient + diffuse) * texColour.xyz;
+
+				vec3 specular;
 				if (diffuseFactor > 0.0)
 				{
-					
-					vec3 diffuse = uLight[i].DiffuseLight * max(uMaterial.DiffuseReflectivity, texColour.xyz) * diffuseFactor * falloff;
 					vec3 specular = uLight[i].SpecularLight * uMaterial.SpecularReflectivity * specularFactor * texColour.xyz * falloff;
-					
-					colour = diffuse * att + specular * att;
-					colour *= uLight[i].Intensity;
 				}
+				else
+				{
+					specular = vec3(0.0);
+				}
+					
+				colour = diffuse * att + specular * att;
+				colour *= uLight[i].Intensity;
 			}
 
-			FragColour += vec4(max(colour, ambient * att), 1);
+			FragColour += vec4(colour, 1);
 		}
 	}
 }

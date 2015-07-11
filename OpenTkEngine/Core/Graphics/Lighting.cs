@@ -42,18 +42,18 @@ namespace OpenTkEngine.Core
         }
 
         private static bool[] switches = new bool[] {
-            true,
             false,
             false,
-            false, 
+            false,
+            true, 
             false
         };
 
         private static Vector3[] lightPositions = new Vector3[] {
             new Vector3(0, 0, 0),
-            new Vector3(0, 50, 0),
+            new Vector3(0, 50, -20),
             new Vector3(0, 350, 0),
-            new Vector3(0, 50, 200),
+            new Vector3(0, 60, 0),
             new Vector3(0, 350, 200)
         };
 
@@ -61,7 +61,7 @@ namespace OpenTkEngine.Core
             new Vector3(0, -1, -1),
             new Vector3(0, 0, 0),
             new Vector3(0, 0, 0),
-            new Vector3(0, 0, -1),
+            new Vector3(0, -1, 0),
             new Vector3(0, 0, -1)
         };
 
@@ -69,7 +69,7 @@ namespace OpenTkEngine.Core
             new Vector3(1, 1, 1),
             new Vector3(1, 1, 1),
             new Vector3(0, 1, 0),
-            new Vector3(1, 1, 0),
+            new Vector3(1, 1, 1),
             new Vector3(1, 0, 1)
         };
 
@@ -85,7 +85,7 @@ namespace OpenTkEngine.Core
             1.0f,
             1000.0f,
             2000.0f,
-            50000.0f,
+            2000.0f,
             50000.0f
         };
 
