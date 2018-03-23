@@ -10,7 +10,7 @@ namespace Test
 {
     public class GameState : State
     {
-
+    //comment
         public GameState(Graphics.RenderMode renderMode, bool overlay)
             : base(renderMode, overlay)
         {
